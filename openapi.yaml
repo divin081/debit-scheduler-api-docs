@@ -1,0 +1,217 @@
+openapi: 3.0.3
+info:
+  title: Scheduled Debit API
+  version: 1.0.0
+  description: |
+    API for scheduling, updating, canceling, and retrieving debit transactions.
+    [Try Sandbox](https://sandbox.api.example.com/v1/scheduled-debits)
+
+servers:
+  - url: https://api.example.com/v1
+
+paths:
+  /scheduled-debits:
+    post:
+      summary: Create a scheduled debit
+      description: Creates a new scheduled debit transaction with the specified details.
+      operationId: createScheduledDebit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskRequest'
+      responses:
+        '200':
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTaskResponse'
+
+    get:
+      summary: Retrieve all scheduled debits
+      description: Retrieves a list of all scheduled debit transactions.
+      operationId: getAllScheduledDebits
+      responses:
+        '200':
+          description: List of scheduled debits
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTasksResponse'
+
+  /scheduled-debits/{taskId}:
+    put:
+      summary: Update a scheduled debit
+      description: Updates the details of an existing scheduled debit transaction identified by taskId.
+      operationId: updateScheduledDebit
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTaskRequest'
+      responses:
+        '200':
+          description: Successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateTaskResponse'
+
+    delete:
+      summary: Cancel a scheduled debit
+      description: Cancels the scheduled debit transaction identified by taskId.
+      operationId: cancelScheduledDebit
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Task cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelTaskResponse'
+
+components:
+  schemas:
+    CreateTaskRequest:
+      type: object
+      required:
+        - amount
+        - account_id
+        - merchant_account_number
+        - frequency
+        - transaction_type
+        - description
+        - schedule_time
+      properties:
+        amount:
+          type: number
+        account_id:
+          type: string
+        merchant_account_number:
+          type: string
+        frequency:
+          type: string
+        transaction_type:
+          type: string
+        description:
+          type: string
+        schedule_time:
+          type: string
+          format: date-time
+
+    CreateTaskResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: object
+          properties:
+            task_id:
+              type: string
+            amount:
+              type: number
+            status:
+              type: string
+            scheduled_for:
+              type: string
+              format: date-time
+
+    UpdateTaskRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+        merchant_account_number:
+          type: string
+        frequency:
+          type: string
+        transaction_type:
+          type: string
+        description:
+          type: string
+        schedule_time:
+          type: string
+          format: date-time
+
+    UpdateTaskResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            task_id:
+              type: string
+            amount:
+              type: number
+            description:
+              type: string
+            schedule_time:
+              type: string
+              format: date-time
+
+    CancelTaskResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            task_id:
+              type: string
+            status:
+              type: string
+
+    GetTasksResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              task_id:
+                type: integer
+              account_id:
+                type: string
+              merchant_account_number:
+                type: string
+              amount:
+                type: number
+              frequency:
+                type: string
+              transaction_type:
+                type: string
+              description:
+                type: string
+              schedule_time:
+                type: string
+                format: date-time
+              status:
+                type: string
+              created_at:
+                type: string
+                format: date-time
